@@ -111,7 +111,7 @@ class App(customtkinter.CTk):
 
     def fetch_data_from_database(self):
         # Connect to the database
-        connection = pymysql.connect(host='localhost', user='root', passwd='1234', db='mydb')
+        connection = pymysql.connect(host='mydb.ciskedsbhsct.us-east-2.rds.amazonaws.com', port=3306, user='root', passwd='12341234', db='mydb')
 
         # Create a cursor object
         cursor = connection.cursor()

@@ -1,4 +1,0 @@
-# mysql_secure_installation config file
-[mysql]
-user=root
-password='cd /Users/kimjunho/Desktop/capstonedesign ; /usr/bin/env /usr/local/bin/python3 /Users/kimjunho/.vscode/extensions/ms-python.python-2023.8.0/pythonFiles/lib/python/debugpy/adapter/../../debugpy/launcher 57867 -- /Users/kimjunho/Desktop/capstonedesign/mysql_with_tkinter/mysql_with_tkinter.py'
