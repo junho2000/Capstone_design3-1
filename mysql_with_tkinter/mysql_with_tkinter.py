@@ -1,5 +1,3 @@
-#def clear_marker_event(self): sql에서 데이터도 없애기
-
 import customtkinter
 from tkintermapview import TkinterMapView
 from tkinter import StringVar

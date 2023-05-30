@@ -8,7 +8,16 @@ import numpy as np
 import dlib
 #face_utils for basic operations of conversion
 from imutils import face_utils
+import pymysql
+from datetime import datetime
+import time
 
+# Connect to the database
+connection = pymysql.connect(host='mydb.ciskedsbhsct.us-east-2.rds.amazonaws.com', port=3306, user='root', passwd='12341234', db='mydb')
+# Create a cursor object
+cursor = connection.cursor()
+cursor.execute("SELECT * FROM person")
+results = cursor.fetchall()
 
 #Initializing the camera and taking the instance
 cap = cv2.VideoCapture(0)
@@ -20,6 +29,8 @@ detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 
 #status marking for current state
+marker_id = 1
+alert_flag = 0
 sleep = 0
 drowsy = 0
 active = 0
@@ -36,9 +47,9 @@ def blinked(a,b,c,d,e,f):
 	ratio = up/(2.0*down)
 
 	#Checking if it is blinked
-	if(ratio>0.2):
+	if(ratio>0.24):
 		return 2
-	elif(ratio>0.15 and ratio<=0.2):
+	elif(ratio>0.2 and ratio<=0.4):
 		return 1
 	else:
 		return 0
@@ -76,6 +87,7 @@ while True:
             if(sleep>6):
                 status="SLEEPING !!!"
                 color = (255,0,0)
+                alert_flag = 1
         
         elif(left_blink==1 or right_blink==1):
             sleep=0
@@ -100,6 +112,40 @@ while True:
         for n in range(0, 68):
             (x,y) = landmarks[n]
             cv2.circle(face_frame, (x, y), 1, (255, 255, 255), -1)
+    
+    cursor.execute("SELECT * FROM person")
+    results = cursor.fetchall()
+    
+    
+    
+    if alert_flag == 1:
+        # Prepare SQL query to INSERT a record into the database
+        sql = "INSERT INTO person(MarkerID, Latitude, Longitude, NumberPlate, Time, Situation) VALUES (%s, %s, %s, %s, %s, %s)"
+        
+        # Prepare the data to be inserted
+        marker_id += 1
+        latitude = 37.12345  # Replace with the actual latitude value
+        longitude = 127.98765  # Replace with the actual longitude value
+        number_plate = "1234"  # Replace with the actual number plate
+        now = datetime.now()
+        now.date()  
+        situation = "sleep alert"  # Replace with the actual situation description
+        
+        data = (marker_id, latitude, longitude, number_plate, now, situation)
+        
+        try:
+            # Execute the SQL command
+            cursor.execute(sql, data)
+            # Commit your changes in the database
+            connection.commit()
+            print("Sleep alert inserted successfully")
+            alert_flag = 0
+        except:
+            # Rollback in case there is any error
+            connection.rollback()
+            print("Error in inserting Sleep alert")
+
+    
             
 
     cv2.imshow("Frame", frame)
