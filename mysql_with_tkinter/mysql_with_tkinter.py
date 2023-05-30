@@ -1,3 +1,5 @@
+#def clear_marker_event(self): sql에서 데이터도 없애기
+
 import customtkinter
 from tkintermapview import TkinterMapView
 from tkinter import StringVar
@@ -148,13 +150,19 @@ class App(customtkinter.CTk):
         current_position = self.map_widget.get_position()
         self.map_widget.set_marker(current_position[0], current_position[1])
 
-    def clear_marker_event(self):
+    def clear_marker_event(self): #sql에서 데이터도 없애기
         while self.marker_list:
             marker = self.marker_list.pop()
             marker.delete()
         self.data.clear()
         self.update_data_table()
+        connection = pymysql.connect(host='mydb.ciskedsbhsct.us-east-2.rds.amazonaws.com', port=3306, user='root', passwd='12341234', db='mydb')
 
+        # Create a cursor object
+        cursor = connection.cursor()
+        query = "DELETE FROM person"
+        cursor.execute(query)
+        connection.commit()
 
     def update_data_table(self):
         self.data_table.delete(*self.data_table.get_children())
