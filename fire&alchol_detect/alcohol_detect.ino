@@ -12,12 +12,14 @@
 #define ALCOHOL_SENSOR_PIN2 A1
 #define THRESHOLD 500 // 알코올 수치 기준값
 
-SoftwareSerial gpsSerial(RX_PIN, TX_PIN);
+// ZigBee 모듈을 연결할 시리얼 핀 설정
+SoftwareSerial zigbeeSerial(10, 11);  // RX, TX
+
 TinyGPSPlus gps;
 
 void setup()
 {
-	Serial.begin(9600);
+	zigbeeSerial.begin(9600);   // ZigBee 모듈 시리얼 통신 시작
 	gpsSerial.begin(9600);
 }
 
@@ -38,8 +40,8 @@ void loop()
     int mean = (alcoholValue1 + alcoholValue2) / 2;
 
 	if (mean > THRESHOLD) {
-		buzer() 
-        Serial.println("alcohol alert!"); // 상황
+		buzer()
+        zigbeeSerial.print("alcohol"); // 상황
 
         //gps 안되면 구현 안될 수도 있음
         while (gpsSerial.available() > 0)
@@ -48,9 +50,9 @@ void loop()
 				if (gps.location.isValid()) {
 					// 알코올 수치와 GPS 데이터 시리얼 통신으로 보내기
 
-					Serial.println("alcohol alert!"); // 상황
-					Serial.print(gps.location.lat(), 6); //위도
-					Serial.println(gps.location.lng(), 6); //경도
+					zigbeeSerial.print("alcohol"); // 상황
+					zigbeeSerial.print(gps.location.lat(), 6); //위도
+					zigbeeSerial.print(gps.location.lng(), 6); //경도
 				}
 			}
 		}

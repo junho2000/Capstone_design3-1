@@ -36,6 +36,10 @@ drowsy = 0
 active = 0
 status=""
 color=(0,0,0)
+latitude = 37.12345  # 국민대 위도 경도
+longitude = 127.98765  
+number_plate = "1234"  # 차량 번호판
+now = datetime.now()
 
 def compute(ptA,ptB):
 	dist = np.linalg.norm(ptA - ptB)
@@ -124,10 +128,6 @@ while True:
         
         # Prepare the data to be inserted
         marker_id += 1
-        latitude = 37.12345  # Replace with the actual latitude value
-        longitude = 127.98765  # Replace with the actual longitude value
-        number_plate = "1234"  # Replace with the actual number plate
-        now = datetime.now()
         now.date()  
         situation = "sleep alert"  # Replace with the actual situation description
         

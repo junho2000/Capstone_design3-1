@@ -6,6 +6,10 @@ import pymysql
 now = datetime.now()
 alert_flag = 0
 marker_id = 1
+latitude = 37.12345  # 미래관 위도 경도
+longitude = 127.98765 
+number_plate = "1234"  #번호판
+now = datetime.now()
 
 #zigbee로 데이터를 받으면 sql데이터로 보내는 기능
 #1 -> fire, 2 -> alcohol alert
@@ -26,69 +30,66 @@ if xbee.is_open == False:
 print("Port open status: ", xbee.is_open)
 print("Receive & Transfer start")
 
-
 if __name__ == "__main__":
 
-    cursor.execute("SELECT * FROM person")
-    results = cursor.fetchall()
-    
-    if alert_flag == 1: #fire
-        # Prepare SQL query to INSERT a record into the database
-        sql = "INSERT INTO person(MarkerID, Latitude, Longitude, NumberPlate, Time, Situation) VALUES (%s, %s, %s, %s, %s, %s)"
+    while True:
+        xbee.flushInput()
+        data = xbee.readline().strip()
+        if data == b'fire':
+            alert_flag = 1
         
-        # Prepare the data to be inserted
-        marker_id += 1
-        latitude = 37.12345  # Replace with the actual latitude value
-        longitude = 127.98765  # Replace with the actual longitude value
-        number_plate = "1234"  # Replace with the actual number plate
-        now = datetime.now()
-        now.date()  
-        situation = "fire alert"  # Replace with the actual situation description
+        elif data == b'alcohol':
+            alert_flag = 2
         
-        data = (marker_id, latitude, longitude, number_plate, now, situation)
+        cursor.execute("SELECT * FROM person")
+        results = cursor.fetchall()
         
-        try:
-            # Execute the SQL command
-            cursor.execute(sql, data)
-            # Commit your changes in the database
-            connection.commit()
-            print("Fire alert inserted successfully")
-            alert_flag = 0
-        except:
-            # Rollback in case there is any error
-            connection.rollback()
-            print("Error in inserting Fire alert")
+        if alert_flag == 1: #fire
+            # Prepare SQL query to INSERT a record into the database
+            sql = "INSERT INTO person(MarkerID, Latitude, Longitude, NumberPlate, Time, Situation) VALUES (%s, %s, %s, %s, %s, %s)"
             
-    elif alert_flag == 2: #alcohol
-        # Prepare SQL query to INSERT a record into the database
-        sql = "INSERT INTO person(MarkerID, Latitude, Longitude, NumberPlate, Time, Situation) VALUES (%s, %s, %s, %s, %s, %s)"
-        
-        # Prepare the data to be inserted
-        marker_id += 1
-        latitude = 37.12345  # Replace with the actual latitude value
-        longitude = 127.98765  # Replace with the actual longitude value
-        number_plate = "1234"  # Replace with the actual number plate
-        now = datetime.now()
-        now.date()  
-        situation = "alcohol alert"  # Replace with the actual situation description
-        
-        data = (marker_id, latitude, longitude, number_plate, now, situation)
-        
-        try:
-            # Execute the SQL command
-            cursor.execute(sql, data)
-            # Commit your changes in the database
-            connection.commit()
-            print("Alcohol alert inserted successfully")
-            alert_flag = 0
-        except:
-            # Rollback in case there is any error
-            connection.rollback()
-            print("Error in inserting Alcohol alert")
-
+            # Prepare the data to be inserted
+            marker_id += 1
+            now.date()  
+            situation = "fire alert"  # Replace with the actual situation description
+            
+            data = (marker_id, latitude, longitude, number_plate, now, situation)
+            
+            try:
+                # Execute the SQL command
+                cursor.execute(sql, data)
+                # Commit your changes in the database
+                connection.commit()
+                print("Fire alert inserted successfully")
+                alert_flag = 0
+            except:
+                # Rollback in case there is any error
+                connection.rollback()
+                print("Error in inserting Fire alert")
+                
+        elif alert_flag == 2: #alcohol
+            # Prepare SQL query to INSERT a record into the database
+            sql = "INSERT INTO person(MarkerID, Latitude, Longitude, NumberPlate, Time, Situation) VALUES (%s, %s, %s, %s, %s, %s)"
+            
+            # Prepare the data to be inserted
+            marker_id += 1
+            now.date()  
+            situation = "alcohol alert"  # Replace with the actual situation description
+            
+            data = (marker_id, latitude, longitude, number_plate, now, situation)
+            
+            try:
+                # Execute the SQL command
+                cursor.execute(sql, data)
+                # Commit your changes in the database
+                connection.commit()
+                print("Alcohol alert inserted successfully")
+                alert_flag = 0
+            except:
+                # Rollback in case there is any error
+                connection.rollback()
+                print("Error in inserting Alcohol alert")
 
 
 xbee.close()
 GPIO.cleanup()
-
-
