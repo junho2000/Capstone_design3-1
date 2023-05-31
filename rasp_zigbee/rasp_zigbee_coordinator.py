@@ -4,11 +4,12 @@ import RPi.GPIO as GPIO
 import pymysql
 
 now = datetime.now()
-alert_flag = 0
-marker_id = 1
+fire_alert = 0
+alcohol_alert = 0
+marker_id = 0
 latitude = 37.60971110526712  # 미래관 위도 경도
 longitude = 126.99762729659923
-number_plate = "1234"  #번호판
+number_plate = "123가 4568"  #번호판
 now = datetime.now()
 
 #zigbee로 데이터를 받으면 sql데이터로 보내는 기능
@@ -35,21 +36,31 @@ if __name__ == "__main__":
     while True:
         xbee.flushInput()
         data = xbee.readline().strip()
+        
         if data == b'fire':
-            alert_flag = 1
+            fire_alert = 1
+            
+        if data == b'alcohol':
+            alcohol_alert = 1
         
-        elif data == b'alcohol':
-            alert_flag = 2
         
-        cursor.execute("SELECT * FROM person")
-        results = cursor.fetchall()
-        
-        if alert_flag == 1: #fire
+        if fire_alert == 1: #fire
+            
+            cursor.execute("SELECT * FROM person")
+            results = cursor.fetchall()
             # Prepare SQL query to INSERT a record into the database
             sql = "INSERT INTO person(MarkerID, Latitude, Longitude, NumberPlate, Time, Situation) VALUES (%s, %s, %s, %s, %s, %s)"
             
             # Prepare the data to be inserted
-            marker_id += 1
+            cursor.execute("SELECT MAX(MarkerID) FROM person")     
+            marker = cursor.fetchone()
+            max_marker_id = marker[0]
+            
+            if max_marker_id is None:
+                marker_id = 1
+            else:
+                marker_id = int(max_marker_id) + 1
+            
             now.date()  
             situation = "fire alert"  # Replace with the actual situation description
             
@@ -67,12 +78,23 @@ if __name__ == "__main__":
                 connection.rollback()
                 print("Error in inserting Fire alert")
                 
-        elif alert_flag == 2: #alcohol
+        if alcohol_alert == 1: #alcohol
+            
+            cursor.execute("SELECT * FROM person")
+            results = cursor.fetchall()
             # Prepare SQL query to INSERT a record into the database
             sql = "INSERT INTO person(MarkerID, Latitude, Longitude, NumberPlate, Time, Situation) VALUES (%s, %s, %s, %s, %s, %s)"
             
             # Prepare the data to be inserted
-            marker_id += 1
+            cursor.execute("SELECT MAX(MarkerID) FROM person")     
+            marker = cursor.fetchone()
+            max_marker_id = marker[0]
+            
+            if max_marker_id is None:
+                marker_id = 1
+            else:
+                marker_id = int(max_marker_id) + 1
+            
             now.date()  
             situation = "alcohol alert"  # Replace with the actual situation description
             
@@ -89,6 +111,9 @@ if __name__ == "__main__":
                 # Rollback in case there is any error
                 connection.rollback()
                 print("Error in inserting Alcohol alert")
+                
+        fire_alert = 0
+        alcohol_alert = 0
 
 
 xbee.close()
