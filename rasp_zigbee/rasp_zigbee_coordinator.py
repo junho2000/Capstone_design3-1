@@ -6,8 +6,8 @@ import pymysql
 now = datetime.now()
 alert_flag = 0
 marker_id = 1
-latitude = 37.12345  # 미래관 위도 경도
-longitude = 127.98765 
+latitude = 37.60971110526712  # 미래관 위도 경도
+longitude = 126.99762729659923
 number_plate = "1234"  #번호판
 now = datetime.now()
 

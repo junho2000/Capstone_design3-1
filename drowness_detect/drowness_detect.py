@@ -36,8 +36,8 @@ drowsy = 0
 active = 0
 status=""
 color=(0,0,0)
-latitude = 37.12345  # 국민대 위도 경도
-longitude = 127.98765  
+latitude = 37.60971110526712  # 국민대 위도 경도
+longitude = 126.99762729659923 
 number_plate = "1234"  # 차량 번호판
 now = datetime.now()
 
