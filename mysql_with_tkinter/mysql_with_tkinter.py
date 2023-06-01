@@ -8,7 +8,7 @@ customtkinter.set_default_color_theme("blue")
 
 class App(customtkinter.CTk):
 
-    APP_NAME = "TkinterMapView with CustomTkinter"
+    APP_NAME = "국민자동차안전 통합 솔루션"
     WIDTH = 1500
     HEIGHT = 800
 

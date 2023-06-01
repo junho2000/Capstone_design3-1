@@ -127,15 +127,20 @@ while True:
         sql = "INSERT INTO person(MarkerID, Latitude, Longitude, NumberPlate, Time, Situation) VALUES (%s, %s, %s, %s, %s, %s)"
         
         # Prepare the data to be inserted
-        
-        cursor.execute("SELECT MAX(MarkerID) FROM person")     
-        marker = cursor.fetchone()
+        cursor.execute("SELECT MAX(CAST(MarkerID AS UNSIGNED)) FROM person")  
+        marker = cursor.fetchall()
         max_marker_id = marker[0]
+        
+        if isinstance(max_marker_id, tuple):
+            max_marker_id = int(max_marker_id[0])
+            
+        print(max_marker_id)
         
         if max_marker_id is None:
             marker_id = 1
         else:
             marker_id = int(max_marker_id) + 1
+        
         
         now.date()  
         situation = "sleep alert"  # Replace with the actual situation description
@@ -149,7 +154,8 @@ while True:
             connection.commit()
             print("Sleep alert inserted successfully")
             alert_flag = 0
-        except:
+        except Exception as e:    # 모든 예외의 에러 메시지를 출력할 때는 Exception을 사용
+            print('예외가 발생했습니다.', e)
             # Rollback in case there is any error
             connection.rollback()
             print("Error in inserting Sleep alert")
