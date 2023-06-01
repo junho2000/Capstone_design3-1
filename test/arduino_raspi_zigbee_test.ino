@@ -1,7 +1,7 @@
 #include <SoftwareSerial.h>
 
 // ZigBee 모듈을 연결할 시리얼 핀 설정
-SoftwareSerial zigbeeSerial(10, 11);  // RX, TX
+SoftwareSerial zigbeeSerial(10, 11);  // TX, RX
 
 void setup() {
   zigbeeSerial.begin(9600);   // ZigBee 모듈 시리얼 통신 시작
