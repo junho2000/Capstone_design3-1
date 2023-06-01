@@ -87,14 +87,10 @@ if __name__ == "__main__":
             
             # Prepare the data to be inserted
             cursor.execute("SELECT MAX(CAST(MarkerID AS UNSIGNED)) FROM person")  
-            marker = cursor.fetchall()
+            marker = cursor.fetchone()
             max_marker_id = marker[0]
-        
-            if isinstance(max_marker_id, tuple):
-                max_marker_id = int(max_marker_id[0])
             
             print(max_marker_id)
-            
             
             if max_marker_id is None:
                 marker_id = 1
