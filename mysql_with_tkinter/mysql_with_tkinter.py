@@ -154,7 +154,6 @@ class App(customtkinter.CTk):
             marker.delete()
         self.data.clear()
         self.update_data_table()
-        connection = pymysql.connect(host='mydb.ciskedsbhsct.us-east-2.rds.amazonaws.com', port=3306, user='root', passwd='12341234', db='mydb')
 
     
     def clear_marker_event(self): #sql에서 데이터도 없애기

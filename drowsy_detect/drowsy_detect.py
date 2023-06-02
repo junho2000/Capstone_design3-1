@@ -13,7 +13,7 @@ from datetime import datetime
 import time
 
 # Connect to the database
-connection = pymysql.connect(host='mydb.ciskedsbhsct.us-east-2.rds.amazonaws.com', port=3306, user='root', passwd='12341234', db='mydb')
+connection = pymysql.connect(host='ip', port=3306, user='id', passwd='pwd', db='dbname')
 # Create a cursor object
 cursor = connection.cursor()
 cursor.execute("SELECT * FROM person")

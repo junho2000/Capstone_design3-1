@@ -8,18 +8,16 @@
 #define FLAME_SENSOR_PIN 7
 #define LED1 13
 #define LED2 12
-#define FLAME_THRESHOLD 500
+#define FLAME_THRESHOLD 17
 
 SoftwareSerial zigbeeSerial(10, 11);
+
 int flame_state = 0; // 감지하면 0
 int air_state = 0;
-
-
-
-// 임계값을 설정합니다.
-const int threshold = 17; // 화재 감지를 위한 임계값
+int mean_air = 0;
 
 void setup() {
+
   // 시리얼 통신을 설정합니다.
   Serial.begin(9600);
   zigbeeSerial.begin(9600);
@@ -33,7 +31,7 @@ void setup() {
 
 void buzz()
 {
-  analogWrite(BUZZ_PIN, 50);
+  analogWrite(BUZZ_PIN, 30);
   delay(300);
   analogWrite(BUZZ_PIN, 0);
   delay(50);
@@ -55,10 +53,10 @@ void loop() {
   Serial.println(airQualityValue2);
   
   // 두 센서 값의 평균을 계산합니다.
-   int mean_air = (airQualityValue1 + airQualityValue2) / 2;
+   mean_air = (airQualityValue1 + airQualityValue2) / 2;
 
   // 평균 값이 임계값보다 크면 LED를 켭니다.
-  if (mean_air > threshold) {
+  if (mean_air > FLAME_THRESHOLD) {
     digitalWrite(LED1, HIGH);
     buzz();
     zigbeeSerial.print("fire");
@@ -71,6 +69,7 @@ void loop() {
     zigbeeSerial.print("fire");
   }
   digitalWrite(LED2, LOW);
-  // 잠시 대기합니다.
+
+  // 지그비 통신을 위해 잠시 대기합니다.
   delay(2000);
 }

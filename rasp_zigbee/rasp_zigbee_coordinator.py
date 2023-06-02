@@ -15,7 +15,7 @@ now = datetime.now()
 #zigbee로 데이터를 받으면 sql데이터로 보내는 기능
 #1 -> fire, 2 -> alcohol alert
 
-connection = pymysql.connect(host='mydb.ciskedsbhsct.us-east-2.rds.amazonaws.com', port=3306, user='root', passwd='12341234', db='mydb')
+connection = pymysql.connect(host='ip', port=3306, user='id', passwd='pwd', db='dbname')
 cursor = connection.cursor()
 
 GPIO.setmode(GPIO.BCM)
