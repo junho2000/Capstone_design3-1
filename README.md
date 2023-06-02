@@ -137,7 +137,7 @@ if data == b'alcohol':
 
 ```python
 # aws rds를 이용해 데이터베이스를 열어 인터넷이 연결되어 있으면 어떠한 ip로도 sql에 접근할 수 있도록 설정
-connection = pymysql.connect(host='mydb.ciskedsbhsct.us-east-2.rds.amazonaws.com', port=3306, user='root', passwd='12341234', db='mydb')
+connection = pymysql.connect(host='ip', port=3306, user='id', passwd='pwd', db='db name')
 cursor = connection.cursor()
   
 ```
