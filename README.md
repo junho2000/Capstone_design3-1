@@ -135,6 +135,8 @@ if data == b'alcohol':
 ```
 #### a. sql 데이터 베이스 사용
 
+관련 설명...
+
 ```python
 # aws rds를 이용해 데이터베이스를 열어 인터넷이 연결되어 있으면 어떠한 ip로도 sql에 접근할 수 있도록 설정
 connection = pymysql.connect(host='ip', port=3306, user='id', passwd='pwd', db='db name')
@@ -142,12 +144,26 @@ cursor = connection.cursor()
   
 ```
 #### 시행착오 및 문제해결 방법
-이 코드를 실행하기 위해선 shape_predictor_68_face_landmarks.dat파일이 같은 경로안에 있어야함.
+지그비 통신으로 데이터를 수신 받으면 1초에 한줄 씩 받으므로 
+```python
+data = xbee.readline().strip()
 
-코드를 실행하면 가끔 라즈베리파이 안에서 돌아가지 못할 때가 있었음
-1. 라즈베리파이가 충분히 신호가 강한 인터넷에 연결되지 않았을 경우 sql에 데이터를 넣을 수 없어서 파일이 중간에 멈췄음. 신호가 약하면 화면이 멈췄음.
-2. 라즈베리파이가 심하게 과열되었을 경우 정상적으로 작동하던 코드가 갑자기 작동이 안될 때가 있었음.
+if data == b'fire':
+  fire_alert = 1
+            
+if data == b'alcohol':
+  alcohol_alert = 1
+```
+이런식으로 받거나 1초안에 연속된 신호들을 계속 받게되면 수신이 제대로 작동하지 않음. -> 해결
 
-웹캠을 킨 라즈베리파이에 VNC를 이용해 접근할려 했지만 계속 검은 화면이 나왔음. 이 문제를 해결 할 수 없었기 때문에 따로 모니터를 사용했음.
+sql에 데이터를 넣을 때 10번 까지 밖에 들어가지 않음. -> cursor.execute("SELECT MAX(CAST(MarkerID AS UNSIGNED)) FROM person") 해결
 
 ### 5. mysql_with_tkinter.py
+
+관리자 한명이 실시간으로 통합적으로 볼 수 있는 GUI화면. 
+
+라이브러리 사용
+import customtkinter
+from tkintermapview import TkinterMapView
+
+버튼 하나하나 설명 + 데이터 테이블 설명
