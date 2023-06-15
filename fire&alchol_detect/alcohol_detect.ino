@@ -1,7 +1,5 @@
 #include <SoftwareSerial.h>
 
-#define RX_PIN 2
-#define TX_PIN 3
 #define BUZZ 6
 #define LED 13
 #define ALCOHOL_SENSOR_1 A0

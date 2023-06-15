@@ -15,7 +15,7 @@ now = datetime.now()
 #zigbee로 데이터를 받으면 sql데이터로 보내는 기능
 #1 -> fire, 2 -> alcohol alert
 
-connection = pymysql.connect(host='ip', port=3306, user='id', passwd='pwd', db='dbname')
+connection = pymysql.connect(host='mydb.ciskedsbhsct.us-east-2.rds.amazonaws.com', port=3306, user='root', passwd='12341234', db='mydb')
 cursor = connection.cursor()
 
 GPIO.setmode(GPIO.BCM)
@@ -36,11 +36,12 @@ if __name__ == "__main__":
     while True:
         xbee.flushInput()
         data = xbee.readline().strip()
-        
-        if data == b'fire':
+        data = str(data)
+        print("data: ", data)
+        if 'fire' in data:
             fire_alert = 1
             
-        if data == b'alcohol':
+        if 'alcohol' in data:
             alcohol_alert = 1
         
         
@@ -52,7 +53,7 @@ if __name__ == "__main__":
             sql = "INSERT INTO person(MarkerID, Latitude, Longitude, NumberPlate, Time, Situation) VALUES (%s, %s, %s, %s, %s, %s)"
             
             # Prepare the data to be inserted
-            cursor.execute("SELECT MAX(MarkerID) FROM person")     
+            cursor.execute("SELECT MAX(CAST(MarkerID AS UNSIGNED)) FROM person")     
             marker = cursor.fetchone()
             max_marker_id = marker[0]
             
@@ -86,11 +87,10 @@ if __name__ == "__main__":
             sql = "INSERT INTO person(MarkerID, Latitude, Longitude, NumberPlate, Time, Situation) VALUES (%s, %s, %s, %s, %s, %s)"
             
             # Prepare the data to be inserted
-            cursor.execute("SELECT MAX(CAST(MarkerID AS UNSIGNED)) FROM person")  
+            cursor.execute("SELECT MAX(CAST(MarkerID AS UNSIGNED)) FROM person")     
             marker = cursor.fetchone()
             max_marker_id = marker[0]
             
-            print(max_marker_id)
             
             if max_marker_id is None:
                 marker_id = 1
