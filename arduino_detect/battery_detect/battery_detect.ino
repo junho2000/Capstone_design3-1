@@ -36,9 +36,9 @@ void loop() {
   
   // 첫 번째 줄에 가변 저항의 값 출력
   lcd.setCursor(0, 0);
-  //lcd.print("DoD: ");
-  //lcd.print(perValue);
-  lcd.print("Cycle: ");
+  lcd.print("DoD:");
+  lcd.print(perValue);
+  lcd.print("Cycle:");
   lcd.print(cycle);
   lcd.print("           ");  // 숫자를 지우기 위해 공백 출력
   
