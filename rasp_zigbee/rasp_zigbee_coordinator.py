@@ -6,6 +6,8 @@ import pymysql
 now = datetime.now()
 fire_alert = 0
 alcohol_alert = 0
+battery_alert = 0
+cycle_alert = 0
 marker_id = 0
 latitude = 37.60971110526712  # 미래관 위도 경도
 longitude = 126.99762729659923
@@ -38,11 +40,18 @@ if __name__ == "__main__":
         data = xbee.readline().strip()
         data = str(data)
         print("data: ", data)
+        
         if 'fire' in data:
             fire_alert = 1
             
         if 'alcohol' in data:
             alcohol_alert = 1
+            
+        if 'battery' in data:
+            battery_alert = 1
+            
+        if 'cycle' in data:
+            cycle_alert = 1
         
         
         if fire_alert == 1: #fire
@@ -113,7 +122,79 @@ if __name__ == "__main__":
                 # Rollback in case there is any error
                 connection.rollback()
                 print("Error in inserting Alcohol alert")
-                
+        
+        if battery_alert == 1: #battery
+            
+            cursor.execute("SELECT * FROM person")
+            results = cursor.fetchall()
+            # Prepare SQL query to INSERT a record into the database
+            sql = "INSERT INTO person(MarkerID, Latitude, Longitude, NumberPlate, Time, Situation) VALUES (%s, %s, %s, %s, %s, %s)"
+            
+            # Prepare the data to be inserted
+            cursor.execute("SELECT MAX(CAST(MarkerID AS UNSIGNED)) FROM person")     
+            marker = cursor.fetchone()
+            max_marker_id = marker[0]
+            
+            
+            if max_marker_id is None:
+                marker_id = 1
+            else:
+                marker_id = int(max_marker_id) + 1
+            
+            now.date()  
+            situation = "low battery"  # Replace with the actual situation description
+            
+            data = (marker_id, latitude, longitude, number_plate, now, situation)
+            
+            try:
+                # Execute the SQL command
+                cursor.execute(sql, data)
+                # Commit your changes in the database
+                connection.commit()
+                print("battery alert inserted successfully")
+                alert_flag = 0
+            except:
+                # Rollback in case there is any error
+                connection.rollback()
+                print("Error in inserting battery alert")
+        
+        if cycle_alert == 1: #cycle
+            
+            cursor.execute("SELECT * FROM person")
+            results = cursor.fetchall()
+            # Prepare SQL query to INSERT a record into the database
+            sql = "INSERT INTO person(MarkerID, Latitude, Longitude, NumberPlate, Time, Situation) VALUES (%s, %s, %s, %s, %s, %s)"
+            
+            # Prepare the data to be inserted
+            cursor.execute("SELECT MAX(CAST(MarkerID AS UNSIGNED)) FROM person")     
+            marker = cursor.fetchone()
+            max_marker_id = marker[0]
+            
+            
+            if max_marker_id is None:
+                marker_id = 1
+            else:
+                marker_id = int(max_marker_id) + 1
+            
+            now.date()  
+            situation = "change battery"  # Replace with the actual situation description
+            
+            data = (marker_id, latitude, longitude, number_plate, now, situation)
+            
+            try:
+                # Execute the SQL command
+                cursor.execute(sql, data)
+                # Commit your changes in the database
+                connection.commit()
+                print("cycle alert inserted successfully")
+                alert_flag = 0
+            except:
+                # Rollback in case there is any error
+                connection.rollback()
+                print("Error in inserting cycle alert")
+        
+        battery_alert = 0
+        cycle_alert = 0
         fire_alert = 0
         alcohol_alert = 0
 
