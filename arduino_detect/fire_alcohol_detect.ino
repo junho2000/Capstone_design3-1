@@ -2,17 +2,17 @@
 
 // 음주운전
 #define BUZZ0 6 
-#define LED_alcohol 13
+#define LED_alcohol 7
 #define ALCOHOL_SENSOR_1 A0
 #define ALCOHOL_SENSOR_2 A1
-#define BUZZ1 6
-#define LED_fire 13
 //차량화재
-#define FLAME_SENSOR_PIN 7
-#define MQ135_PIN1 A0
-#define MQ135_PIN2 A1
+#define BUZZ1 3
+#define LED_fire 4
+#define FLAME_SENSOR_PIN 9
+#define MQ135_PIN1 A3
+#define MQ135_PIN2 A4
 #define THRESHOLD 300 // 알코올 수치 기준값
-#define FLAME_THRESHOLD 17  
+#define FLAME_THRESHOLD 30 
 
 // ZigBee 모듈을 연결할 시리얼 핀 설정
 SoftwareSerial zigbeeSerial(10, 11);  // RX, TX
@@ -20,6 +20,7 @@ SoftwareSerial zigbeeSerial(10, 11);  // RX, TX
 int flame_state = 0; // 감지하면 0
 int air_state = 0;
 int mean_air = 0;
+
 
 void buzz_alcohol()
 {
@@ -52,29 +53,21 @@ void setup()
 
 void loop()
 {
-  // 알코울 수치 측정
-  int alcoholValue_1 = analogRead(ALCOHOL_SENSOR_1);
-  int alcoholValue_2 = analogRead(ALCOHOL_SENSOR_2);
-  
-  // 센서 값의 평균
-  int alcoholValue = (alcoholValue_1 + alcoholValue_2) / 2;
-  
-  // 차량화재
+   // 차량화재
   flame_state=digitalRead(FLAME_SENSOR_PIN);
-  digitalWrite(LED_fire, LOW);
+  
+  //digitalWrite(LED_fire, LOW);
   
   // 공기질센서
   int airQualityValue1 = analogRead(MQ135_PIN1);
   int airQualityValue2 = analogRead(MQ135_PIN2);
 
-  Serial.print("Air Sensor Value 1: ");
-  Serial.println(airQualityValue1);
-  Serial.print("Air Sensor Value 2: ");
-  Serial.println(airQualityValue2);
-  
-  // 두 센서 값의 평균을 계산합니다.
-  mean_air = (airQualityValue1 + airQualityValue2) / 2;
-  
+  // 알코울 수치 측정
+  int alcoholValue_1 = analogRead(ALCOHOL_SENSOR_1);
+  int alcoholValue_2 = analogRead(ALCOHOL_SENSOR_2);
+  // 센서 값의 평균
+  int alcoholValue = (alcoholValue_1 + alcoholValue_2) / 2;
+
   if (alcoholValue > THRESHOLD) 
   {
     digitalWrite(LED_alcohol, HIGH);
@@ -84,14 +77,24 @@ void loop()
     digitalWrite(LED_alcohol, LOW);
   }
   
+
+ 
+  Serial.print("Air Sensor Value 1: ");
+  Serial.println(airQualityValue1);
+  Serial.print("Air Sensor Value 2: ");
+  Serial.println(airQualityValue2);
+  
+  // 두 센서 값의 평균을 계산합니다.
+   mean_air = (airQualityValue1 + airQualityValue2) / 2;
+
   // 평균 값이 임계값보다 크면 LED를 켭니다.
   if(mean_air > FLAME_THRESHOLD || flame_state == 0) 
   {
     digitalWrite(LED_fire, HIGH);
     buzz_fire();
-    Serial.print("fire");
+    Serial.println("fire");
     zigbeeSerial.print("fire");
     digitalWrite(LED_fire, LOW);
   }
-delay(2000);
+ delay(2000);
 }
