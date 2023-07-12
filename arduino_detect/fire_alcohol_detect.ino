@@ -73,7 +73,7 @@ void loop()
   Serial.println(airQualityValue2);
   
   // 두 센서 값의 평균을 계산합니다.
-   mean_air = (airQualityValue1 + airQualityValue2) / 2;
+  mean_air = (airQualityValue1 + airQualityValue2) / 2;
   
   if (alcoholValue > THRESHOLD) 
   {
@@ -91,6 +91,7 @@ void loop()
     buzz_fire();
     Serial.print("fire");
     zigbeeSerial.print("fire");
+    digitalWrite(LED_fire, LOW);
   }
-  digitalWrite(LED_fire, LOW);
+delay(2000);
 }
